@@ -1,0 +1,562 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manual de prácticas</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #17152e, #482c70, #151020);
+    font-family: 'Segoe UI', sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    overflow: hidden;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+header h1 {
+    color: #eadbff;
+    font-size: 30px;
+    text-shadow: 0 0 15px #b87aff;
+}
+
+header p {
+    color: #d5c5f0;
+    margin-top: 8px;
+}
+
+.libro {
+    width: 850px;
+    height: 540px;
+    max-width: 95vw;
+    display: flex;
+    position: relative;
+    perspective: 1800px;
+    box-shadow: 0 20px 50px #0009;
+    border-radius: 12px;
+}
+
+.lado {
+    width: 50%;
+    height: 100%;
+    position: relative;
+    background: #fffaff;
+    color: #29213a;
+    overflow: hidden;
+}
+
+.izquierda {
+    border-radius: 12px 0 0 12px;
+    border-right: 2px solid #d4c1e7;
+}
+
+.derecha {
+    border-radius: 0 12px 12px 0;
+}
+
+.contenido {
+    height: 100%;
+    width: 100%;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.contenido h2 {
+    color: #713da9;
+    font-size: 25px;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #c8a5ed;
+    padding-bottom: 10px;
+}
+
+.contenido p {
+    font-size: 15px;
+    line-height: 1.7;
+    text-align: justify;
+    margin-bottom: 12px;
+}
+
+.contenido img {
+    width: 100%;
+    max-height: 290px;
+    object-fit: contain;
+    margin: 15px auto;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px #0002;
+}
+
+.numero {
+    position: absolute;
+    bottom: 12px;
+    width: 100%;
+    left: 0;
+    text-align: center;
+    color: #967bb7;
+    font-size: 13px;
+}
+
+.portada {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(145deg, #32165a, #7845b8, #251044);
+    border: 3px solid #c9a8ff;
+    color: white;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.portada h1 {
+    color: white;
+    font-size: 35px;
+    line-height: 1.4;
+    text-align: center;
+    border: none;
+    text-shadow: 0 0 15px #e4c5ff;
+}
+
+.portada p {
+    text-align: center;
+    color: #f0e4ff;
+    margin-top: 12px;
+}
+
+.linea {
+    width: 80%;
+    height: 2px;
+    background: #d8baff;
+    margin: 25px auto;
+}
+
+.decoracion {
+    font-size: 65px;
+    margin-bottom: 20px;
+}
+
+.vacia {
+    background: #f1eafa;
+}
+
+.animar {
+    animation: pasar 0.55s ease;
+}
+
+@keyframes pasar {
+    0% { transform: rotateY(0deg); }
+    50% { transform: rotateY(-9deg); }
+    100% { transform: rotateY(0deg); }
+}
+
+.zona {
+    position: absolute;
+    top: 0;
+    width: 50%;
+    height: 100%;
+    z-index: 10;
+}
+
+.zona-izquierda {
+    left: 0;
+    cursor: w-resize;
+}
+
+.zona-derecha {
+    right: 0;
+    cursor: e-resize;
+}
+
+.instruccion {
+    text-align: center;
+    margin-top: 25px;
+    color: #e1d2f7;
+    font-size: 14px;
+}
+
+.progreso {
+    margin-top: 10px;
+    color: #c8a5ed;
+    font-size: 13px;
+}
+
+@media(max-width: 600px) {
+    .libro {
+        width: 96vw;
+        height: 430px;
+    }
+
+    .contenido {
+        padding: 15px;
+    }
+
+    .contenido h2 {
+        font-size: 18px;
+    }
+
+    .contenido p {
+        font-size: 12px;
+    }
+
+    .contenido img {
+        max-height: 220px;
+    }
+
+    .portada h1 {
+        font-size: 22px;
+    }
+
+    header h1 {
+        font-size: 23px;
+    }
+
+    .decoracion {
+        font-size: 40px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>📖 Manual de prácticas</h1>
+    <p>Libro digital interactivo</p>
+</header>
+
+<div class="libro" id="libro">
+
+    <div class="lado izquierda" id="izquierda"></div>
+    <div class="lado derecha" id="derecha"></div>
+
+    <div class="zona zona-izquierda" id="zonaIzquierda"></div>
+    <div class="zona zona-derecha" id="zonaDerecha"></div>
+
+</div>
+
+<div class="instruccion">
+    ✨ Haz clic a la derecha para avanzar y a la izquierda para regresar.
+</div>
+
+<div class="progreso" id="progreso"></div>
+
+<script>
+
+/* =================================
+   CONTENIDO DE LAS 18 PÁGINAS
+================================= */
+
+const paginas = [
+
+{
+titulo: "Manual de prácticas",
+portada: true,
+texto: `
+<div class="decoracion">📘</div>
+<h1>MANUAL<br>DE PRÁCTICAS</h1>
+<div class="linea"></div>
+<p>Libro digital escolar</p>
+<br>
+<p><strong>Alumna:</strong></p>
+<p>Ingrid Yoselin Dionisio Nolasco</p>
+<p><strong>Grupo:</strong> 511</p>
+<p>2026</p>
+`,
+imagen: ""
+},
+
+{
+titulo: "Índice",
+texto: `
+<p>01. Introducción</p>
+<p>02. Bordes</p>
+<p>03. Cambio de fondo</p>
+<p>04. CAPTCHA</p>
+<p>05. Carrusel de efecto</p>
+<p>06. Encuesta</p>
+<p>07. Historia</p>
+<p>08. Juego</p>
+<p>09. Libro digital</p>
+<p>10. Periódico</p>
+<p>11. Quitar personaje</p>
+<p>12. Registros</p>
+<p>13. Reproductor de música</p>
+<p>14. Tamaño de texto</p>
+<p>15. Tarjeta 3D</p>
+<p>16. Traductor</p>
+`,
+imagen: ""
+},
+
+{
+titulo: "Introducción",
+texto: `
+<p>El presente manual de prácticas reúne diferentes actividades realizadas durante el curso.</p>
+<p>Su propósito es mostrar los trabajos desarrollados, explicar sus características y presentar evidencias de cada actividad mediante imágenes.</p>
+<p>Estas prácticas permiten reforzar los conocimientos adquiridos en clase y desarrollar habilidades tecnológicas.</p>
+`,
+imagen: ""
+},
+
+{
+titulo: "Práctica 1. Bordes",
+texto: `
+<p>En esta práctica se trabajó con los bordes de los elementos de una página web.</p>
+<p>Se utilizaron propiedades de CSS para modificar el grosor, estilo y apariencia de los bordes.</p>
+`,
+imagen: "imagenes/bordes.png"
+},
+
+{
+titulo: "Práctica 2. Cambio de fondo",
+texto: `
+<p>Esta actividad consiste en modificar el fondo de una página web utilizando CSS.</p>
+<p>Se pueden aplicar colores, imágenes y diferentes estilos para mejorar la presentación.</p>
+`,
+imagen: "imagenes/cambiodfondo.png"
+},
+
+{
+titulo: "Práctica 3. CAPTCHA",
+texto: `
+<p>En esta práctica se trabajó con un sistema CAPTCHA.</p>
+<p>Su función es comprobar que el usuario está interactuando con una página y no se trata de un proceso automatizado.</p>
+`,
+imagen: "imagenes/captcha.png"
+},
+
+{
+titulo: "Práctica 4. Carrusel de efecto",
+texto: `
+<p>El carrusel permite mostrar diferentes imágenes de manera organizada y dinámica.</p>
+<p>Se pueden utilizar animaciones para cambiar entre las imágenes.</p>
+`,
+imagen: "imagenes/carruselefecto.png"
+},
+
+{
+titulo: "Práctica 5. Encuesta",
+texto: `
+<p>Se desarrolló una encuesta digital para recopilar respuestas de los usuarios.</p>
+<p>Se pueden incluir preguntas, opciones y campos para registrar información al terminar la encuesta te da un documento pdf</p>
+`,
+imagen: "imagenes/encuesta.png"
+},
+
+{
+titulo: "Práctica 6. Historia",
+texto: `
+<p>Esta práctica consiste en presentar una historia mediante un libro digital.</p>
+<p>Se pueden combinar textos, imagenes y elementos visuales para contar acontecimientos.</p>
+`,
+imagen: "imagenes/historia.png"
+},
+
+{
+titulo: "Práctica 7. Juego",
+texto: `
+<p>En esta actividad se desarrolló un juego interactivo.</p>
+<p>Se utilizan elementos de programación para permitir que el usuario participe en la actividad.</p>
+`,
+imagen: "imagenes/juego.png"
+},
+
+{
+titulo: "Práctica 8. Libro digital",
+texto: `
+<p>Esta práctica muestra la creación de un libro digital.</p>
+<p>Se pueden organizar páginas con texto e imágenes para presentar información de forma interactiva 
+    en este caso las imagenes estan puestas en figuras como circulos cuadrados o rombos para ver de q otras formas se podrian organizaer las imagenes</p>
+`,
+imagen: "imagenes/libroluisito.png"
+},
+
+{
+titulo: "Práctica 9. Periódico",
+texto: `
+<p>Se realizó un periódico digital con información organizada en diferentes secciones.</p>
+<p>Su diseño permite presentar noticias y contenido de manera clara con animaciones en las imagenes</p>
+`,
+imagen: "imagenes/periodico.png"
+},
+
+{
+titulo: "Práctica 10. Quitar personaje",
+texto: `
+<p>En esta práctica se trabajó con la eliminación de un personaje de una composición digital.</p>
+<p>Se utilizaron herramientas de programación y edición para modificar los elementos visuales.</p>
+`,
+imagen: "imagenes/quitapersonaje.png"
+},
+
+{
+titulo: "Práctica 11. Registros",
+texto: `
+<p>Esta actividad permite trabajar con registros de información de alumnos</p>
+<p>Se pueden organizar datos y mostrar la información almacenada de manera ordenada.</p>
+`,
+imagen: "imagenes/registros.png"
+},
+
+{
+titulo: "Práctica 12. Reproductor de música",
+texto: `
+<p>Se diseñó un reproductor de música utilizando HTML, CSS y JavaScript.</p>
+<p>Permite presentar canciones y controles para reproducir contenido musical como la app de spotify o algo similar</p>
+`,
+imagen: "imagenes/reproductordemusica.png"
+},
+
+{
+titulo: "Práctica 13. Tamaño de texto",
+texto: `
+<p>En esta práctica se modificó el tamaño de los textos de una página web.</p>
+<p>Se utilizaron propiedades CSS para mejorar la lectura y presentación del contenido.</p>
+`,
+imagen: "imagenes/tamañotexto.png"
+},
+
+{
+titulo: "Práctica 14. Tarjeta 3D",
+texto: `
+<p>Se creó una tarjeta con efecto tridimensional.</p>
+<p>Mediante CSS se aplicaron transformaciones para generar profundidad y movimiento.</p>
+`,
+imagen: "imagenes/tarjeta3d.png"
+},
+
+{
+titulo: "Práctica 15. Traductor",
+texto: `
+<p>Esta práctica consiste en desarrollar una herramienta de traducción.</p>
+<p>Su finalidad es facilitar la comprensión de palabras y textos en diferentes idiomas.</p>
+`,
+imagen: "imagenes/traductor.png"
+}
+
+];
+
+/* =================================
+   CONFIGURACIÓN DEL LIBRO
+================================= */
+
+let apertura = 0;
+
+const izquierda = document.getElementById("izquierda");
+const derecha = document.getElementById("derecha");
+
+const totalAperturas = 10;
+
+/* CREAR CONTENIDO */
+
+function crearContenido(pagina, numero) {
+
+    if (!pagina) {
+        return `<div class="contenido vacia"></div>`;
+    }
+
+    return `
+        <div class="contenido ${pagina.portada ? "portada" : ""}">
+
+            ${pagina.portada ? "" : `<h2>${pagina.titulo}</h2>`}
+
+            ${pagina.texto}
+
+            ${pagina.imagen ? `
+                <img src="${pagina.imagen}"
+                     alt="${pagina.titulo}"
+                     onerror="this.style.display='none';">
+            ` : ""}
+
+        </div>
+
+        <div class="numero">${numero + 1} / 18</div>
+    `;
+}
+
+/* MOSTRAR PÁGINAS */
+
+function mostrarPagina() {
+
+    let indiceIzquierda = apertura * 2 - 1;
+    let indiceDerecha = apertura * 2;
+
+    let paginaIzquierda = apertura === 0
+        ? null
+        : paginas[indiceIzquierda];
+
+    let paginaDerecha = paginas[indiceDerecha] || null;
+
+    izquierda.innerHTML = paginaIzquierda
+        ? crearContenido(paginaIzquierda, indiceIzquierda)
+        : `<div class="contenido vacia"></div>`;
+
+    derecha.innerHTML = paginaDerecha
+        ? crearContenido(paginaDerecha, indiceDerecha)
+        : `<div class="contenido vacia"></div>`;
+
+    izquierda.classList.remove("animar");
+    derecha.classList.remove("animar");
+
+    void izquierda.offsetWidth;
+
+    izquierda.classList.add("animar");
+    derecha.classList.add("animar");
+
+    let inicio = apertura === 0 ? 1 : apertura * 2;
+    let fin = Math.min(inicio + 1, 18);
+
+    document.getElementById("progreso").textContent =
+        apertura === 0
+        ? "Portada | 18 páginas"
+        : `Páginas ${inicio} y ${fin} de 18`;
+}
+
+/* AVANZAR */
+
+document.getElementById("zonaDerecha")
+.addEventListener("click", function() {
+
+    if (apertura < totalAperturas - 1) {
+        apertura++;
+        mostrarPagina();
+    }
+
+});
+
+/* REGRESAR */
+
+document.getElementById("zonaIzquierda")
+.addEventListener("click", function() {
+
+    if (apertura > 0) {
+        apertura--;
+        mostrarPagina();
+    }
+
+});
+
+/* INICIAR */
+
+mostrarPagina();
+
+</script>
+
+</body>
+</html>
